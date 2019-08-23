@@ -1,0 +1,27 @@
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    passwordHash VARCHAR(128) NOT NULL,
+    passwordSalt VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    firstName VARCHAR(255),
+    lastName VARCHAR(255),
+    last_login TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE images (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT,
+  title VARCHAR(255),
+  description VARCHAR(1024),
+  filename VARCHAR(255) NOT NULL,
+  location POINT NOT NULL,
+  CONSTRAINT PRIMARY KEY (id),
+  CONSTRAINT FOREIGN KEY (user_id) REFERENCES users(id)
+)

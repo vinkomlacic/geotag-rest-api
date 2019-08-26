@@ -30,4 +30,7 @@ public class Image {
 
     @Column(nullable = false, unique = true)
     private final String deviceId;
+
+    @Transient
+    private final String base64Content;
 }

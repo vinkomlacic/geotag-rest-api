@@ -1,54 +1,50 @@
 package org.geotag.geotagrestapi.service;
 
-import org.geotag.geotagrestapi.exceptions.NotADirectoryException;
-import org.geotag.geotagrestapi.exceptions.PathNotFoundException;
+import org.geotag.geotagrestapi.config.FileRepositoryConfig;
+import org.geotag.geotagrestapi.model.Image;
+import org.geotag.geotagrestapi.repository.ImageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
 
 @Service
 public class Base64ImageStoreService implements ImageStoreService {
-    private AtomicInteger counter = new AtomicInteger();
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private FileRepositoryConfig fileRepositoryConfig;
 
     @Override
-    public String storeImageToDirectory(final String b64Content, final Path directoryPath) throws Exception {
-        checkB64ContentValidity(b64Content);
-        checkPathValidity(directoryPath);
-
-        byte[] imageBytes = getImageBytesFrom(b64Content);
-        Path newFilePath = appendNewFilePathTo(directoryPath);
-
-        Files.write(newFilePath, imageBytes);
-
-        return newFilePath.getFileName().toString();
+    public void store(final Image image) throws Exception {
+        storeImageToDisk(image);
+        imageRepository.save(image);
     }
 
-    private void checkB64ContentValidity(final String b64Content) throws Exception {
-        if (b64Content == null || b64Content.isEmpty()) {
-            throw new IllegalArgumentException("Content argument must not be null or empty");
+    @Override
+    public Set<Image> getMultipleImagesFor(final String deviceId) throws Exception {
+        Set<Image> images = imageRepository.getImagesByDeviceId(deviceId);
+
+        for (final Image image : images) {
+            String base64Content = getBase64EncodedImage(image.getEncodedFilename());
+            image.setBase64Content(base64Content);
         }
+
+        return images;
     }
 
-    private void checkPathValidity(final Path path) throws IllegalArgumentException, PathNotFoundException, NotADirectoryException {
-        if (path == null) throw new IllegalArgumentException("Path argument must not be null");
-        checkIfPathExists(path);
-        checkIfPathIsADirectory(path);
-    }
+    private void storeImageToDisk(final Image image) throws IOException {
+        Path fileRepository = fileRepositoryConfig.getPath();
+        Path fullImagePath = Paths.get(fileRepository.toString(), image.getEncodedFilename());
 
-    private void checkIfPathExists(final Path path) throws PathNotFoundException {
-        if (!Files.exists(path)) {
-            throw new PathNotFoundException(path);
-        }
-    }
-    
-    private void checkIfPathIsADirectory(final Path path) throws NotADirectoryException {
-        if (!Files.isDirectory(path)) {
-            throw new NotADirectoryException(path);
-        }
+        byte[] imageBytes = getImageBytesFrom(image.getBase64Content());
+        Files.write(fullImagePath, imageBytes);
     }
 
     private byte[] getImageBytesFrom(final String base64) {
@@ -56,12 +52,17 @@ public class Base64ImageStoreService implements ImageStoreService {
         return decoder.decode(base64);
     }
 
-    private Path appendNewFilePathTo(final Path baseDirectory) {
-        String uniqueFilename = generateUniqueFilename();
-        return Paths.get(baseDirectory.toString(), uniqueFilename);
+    private String getBase64EncodedImage(final String filename) throws IOException {
+        byte[] imageBytes = readBytesFrom(filename);
+
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(imageBytes);
     }
 
-    private String generateUniqueFilename() {
-        return String.format("%d_%d_image.jpg", System.currentTimeMillis(), counter.getAndIncrement());
+    private byte[] readBytesFrom(final String filename) throws IOException {
+        Path fileRepository = fileRepositoryConfig.getPath();
+        Path fullImagePath = Paths.get(fileRepository.toString(), filename);
+
+        return Files.readAllBytes(fullImagePath);
     }
 }

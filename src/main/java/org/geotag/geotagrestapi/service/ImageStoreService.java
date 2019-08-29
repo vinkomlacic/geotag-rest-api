@@ -1,7 +1,10 @@
 package org.geotag.geotagrestapi.service;
 
-import java.nio.file.Path;
+import org.geotag.geotagrestapi.model.Image;
+
+import java.util.Set;
 
 public interface ImageStoreService {
-    String storeImageToDirectory(final String b64Content, final Path directoryPath) throws Exception;
+    void store(final Image image) throws Exception;
+    Set<Image> getMultipleImagesFor(final String deviceId) throws Exception;
 }

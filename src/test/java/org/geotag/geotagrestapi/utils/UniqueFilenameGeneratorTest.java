@@ -1,6 +1,5 @@
-package org.geotag.geotagrestapi.service;
+package org.geotag.geotagrestapi.utils;
 
-import org.geotag.geotagrestapi.utils.UniqueFilenameGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 

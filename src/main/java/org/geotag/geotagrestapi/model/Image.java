@@ -16,6 +16,22 @@ import javax.validation.constraints.*;
 public class Image {
     private static final String B64_REGEXP = "[a-zA-Z0-9+/=]*";
 
+    public Image(final String title, final String description, final String filename, final String encodedFilename,
+                 final Point location, final String deviceId, final String base64Content) {
+        this.title = title;
+        this.description = description;
+        this.filename = filename;
+        this.encodedFilename = encodedFilename;
+        this.location = location;
+        this.deviceId = deviceId;
+        this.base64Content = base64Content;
+    }
+
+    public Image(final String title, final String description, final String filename, final String encodedFilename,
+                 final Point location, final String deviceId) {
+        this(title, description, filename, encodedFilename, location, deviceId, null);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -50,5 +66,5 @@ public class Image {
     @Transient
     @NotEmpty(message = "Image must have content")
     @Pattern(regexp = Image.B64_REGEXP, message = "Content must be in B64 format")
-    private final String base64Content;
+    private String base64Content;
 }

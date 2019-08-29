@@ -12,6 +12,8 @@ import org.springframework.data.geo.Point;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Set;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @TestPropertySource(properties = {
@@ -41,7 +43,8 @@ public class ImageRepositoryIntegrationTest {
         entityManager.persist(image);
         entityManager.flush();
 
-        Image found = imageRepository.getImageByDeviceId(deviceId);
+        Set<Image> images = imageRepository.getImagesByDeviceId(deviceId);
+        Image found = images.iterator().next();
 
         Assert.assertEquals(image.getId(), found.getId());
     }

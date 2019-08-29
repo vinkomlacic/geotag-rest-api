@@ -35,6 +35,11 @@ public class Image {
     private final String filename;
 
     @Column(nullable = false)
+    @NotNull(message = "Encoded filename cannot be null")
+    @Size(max = 255)
+    private final String encodedFilename;
+
+    @Column(nullable = false)
     @NotNull(message = "Location cannot be null")
     private final Point location;
 

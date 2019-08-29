@@ -22,6 +22,7 @@ public class ImageTest {
     private static Path defaultImagePath;
     private static String defaultImageTitle;
     private static String defaultImageDescription;
+    private static String defaultImageEncodedFilename;
     private static Point defaultImageLocation;
     private static String defaultImageDeviceId;
     private static String defaultImageBase64Content;
@@ -41,6 +42,7 @@ public class ImageTest {
         byte[] defaultImageBytes = Files.readAllBytes(defaultImagePath);
         defaultImageTitle = "dummy image";
         defaultImageDescription = "dummy image";
+        defaultImageEncodedFilename = "encoded filename";
         defaultImageLocation = new Point(1, 2);
         defaultImageDeviceId = "#12345";
         defaultImageBase64Content = getBase64StringFrom(defaultImageBytes);
@@ -57,6 +59,7 @@ public class ImageTest {
                 defaultImageTitle,
                 defaultImageDescription,
                 defaultImagePath.getFileName().toString(),
+                defaultImageEncodedFilename,
                 defaultImageLocation,
                 defaultImageDeviceId,
                 defaultImageBase64Content
@@ -86,6 +89,19 @@ public class ImageTest {
     public void constructor_GivenLargeDescription_ShouldProduceAConstraintViolation() throws Exception {
         String elevenHundredCharacterLine = createLineOf(1100);
         setBeanProperty(Image.Fields.description, elevenHundredCharacterLine);
+        assertBeanIsInvalid(image);
+    }
+
+    @Test
+    public void constructor_GivenNullEncodedFilename_ShouldProduceAConstraintViolation() throws Exception {
+        setBeanProperty(Image.Fields.encodedFilename, null);
+        assertBeanIsInvalid(image);
+    }
+
+    @Test
+    public void constructor_GivenLargeEncodedFilename_ShouldProducerAConstraintViolation() throws Exception {
+        String threeHundredCharacterLine = createLineOf(300);
+        setBeanProperty(Image.Fields.encodedFilename, threeHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 

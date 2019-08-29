@@ -33,6 +33,7 @@ public class ImageRepositoryIntegrationTest {
                 "testImage",
                 "image used for testing",
                 "Arnold_River.jpg",
+                "encoded filename",
                 new Point(1, 2),
                 deviceId,
                 "base64"

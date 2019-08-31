@@ -1,6 +1,7 @@
 package org.geotag.geotagrestapi.service;
 
 import org.geotag.geotagrestapi.config.FileRepositoryConfig;
+import org.geotag.geotagrestapi.utils.UniqueFilenameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,11 @@ public class StorageAccessBaseTest {
         @Bean
         public ImageRetrievalService imageRetrievalService() {
             return new Base64ImageRetrievalService();
+        }
+
+        @Bean
+        public UniqueFilenameGenerator uniqueFilenameGenerator() {
+            return new UniqueFilenameGenerator();
         }
 
         @Bean

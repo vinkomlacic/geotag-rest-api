@@ -2,11 +2,11 @@ DROP TABLE IF EXISTS images;
 
 CREATE TABLE images (
   id INT NOT NULL AUTO_INCREMENT,
-  user_id INT,
   title VARCHAR(255),
   description VARCHAR(1024),
   filename VARCHAR(255) NOT NULL,
+  encoded_filename VARCHAR(255) NOT NULL,
   location POINT NOT NULL,
-  deviceId VARCHAR(255) NOT NULL UNIQUE,
+  device_id VARCHAR(255) NOT NULL UNIQUE,
   CONSTRAINT PRIMARY KEY (id)
 )

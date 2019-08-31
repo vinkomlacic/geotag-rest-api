@@ -32,6 +32,16 @@ public class Image {
         this(title, description, filename, encodedFilename, location, deviceId, null);
     }
 
+    public Image(final String title, final String description, final String filename, final Point location,
+                 final String deviceId) {
+        this(title, description, filename, null, location, deviceId, null);
+    }
+
+    public Image(final String title, final String description, final String filename, final Point location,
+                 final String deviceId, final String base64Content) {
+        this(title, description, filename, null, location, deviceId, base64Content);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -50,16 +60,16 @@ public class Image {
     @Size(max = 255)
     private final String filename;
 
-    @Column(nullable = false)
-    @NotNull(message = "Encoded filename cannot be null")
+    @Column(name = "encoded_filename", nullable = false)
     @Size(max = 255)
-    private final String encodedFilename;
+    private String encodedFilename;
 
     @Column(nullable = false)
     @NotNull(message = "Location cannot be null")
     private final Point location;
 
-    @Column
+    @Column(name = "device_id", nullable = false)
+    @NotNull(message = "Device ID cannot be null")
     @Size(max = 255)
     private final String deviceId;
 

@@ -27,8 +27,8 @@ public class Base64ImageStoreService implements ImageStoreService {
     }
 
     private void storeImageToDisk(final Image image) throws IOException {
-        Path fileRepository = fileRepositoryConfig.getPath();
-        Path fullImagePath = Paths.get(fileRepository.toString(), image.getEncodedFilename());
+        String fileRepositoryPath = fileRepositoryConfig.getPath();
+        Path fullImagePath = Paths.get(fileRepositoryPath, image.getEncodedFilename());
 
         byte[] imageBytes = getImageBytesFrom(image.getBase64Content());
         Files.write(fullImagePath, imageBytes);

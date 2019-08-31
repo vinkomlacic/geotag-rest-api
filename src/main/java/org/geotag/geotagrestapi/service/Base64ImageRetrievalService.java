@@ -51,8 +51,8 @@ public class Base64ImageRetrievalService implements ImageRetrievalService {
     }
 
     private byte[] readBytesFrom(final String filename) throws IOException {
-        Path fileRepository = fileRepositoryConfig.getPath();
-        Path fullImagePath = Paths.get(fileRepository.toString(), filename);
+        String fileRepositoryPath = fileRepositoryConfig.getPath();
+        Path fullImagePath = Paths.get(fileRepositoryPath, filename);
 
         return Files.readAllBytes(fullImagePath);
     }

@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.geo.Point;
@@ -55,7 +54,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
     }
 
     private void createCopyOfDummyImageNamed(final String filename) throws IOException {
-        String fileRepositoryPath = fileRepositoryConfig.getPath().toString();
+        String fileRepositoryPath = fileRepositoryConfig.getPath();
         Path originalImage = Paths.get(fileRepositoryPath, DUMMY_IMAGE_FILENAME);
         Path newImage = Paths.get(fileRepositoryPath, filename);
 
@@ -64,7 +63,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
 
     @After
     public void tearDown() throws IOException {
-        String directoryPath = fileRepositoryConfig.getPath().toString();
+        String directoryPath = fileRepositoryConfig.getPath();
         Path imagePath = Paths.get(directoryPath, image.getEncodedFilename());
         Files.delete(imagePath);
     }

@@ -63,8 +63,8 @@ public class ImageStoreServiceTest extends StorageAccessBaseTest {
 
     @After
     public void tearDown() throws IOException {
-        Path directory = fileRepositoryConfig.getPath();
-        Path imagePath = Paths.get(directory.toString(), image.getEncodedFilename());
+        String directory = fileRepositoryConfig.getPath();
+        Path imagePath = Paths.get(directory, image.getEncodedFilename());
         Files.delete(imagePath);
     }
 
@@ -75,8 +75,8 @@ public class ImageStoreServiceTest extends StorageAccessBaseTest {
     }
 
     private void assertImageIsStoredToDisk() {
-        Path directory = fileRepositoryConfig.getPath();
-        Path imagePath = Paths.get(directory.toString(), image.getEncodedFilename());
+        String directory = fileRepositoryConfig.getPath();
+        Path imagePath = Paths.get(directory, image.getEncodedFilename());
 
         Assert.assertTrue(Files.exists(imagePath));
         Assert.assertTrue(Files.isRegularFile(imagePath));

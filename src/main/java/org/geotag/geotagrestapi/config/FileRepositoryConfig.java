@@ -10,23 +10,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
-@ConfigurationProperties("file.repository")
+@ConfigurationProperties(prefix = "file.repository")
 public class FileRepositoryConfig {
-    private Path path;
+    private String path;
 
-    public Path getPath() {
+    public String getPath() {
         return path;
     }
 
-    public void setPath(String path) throws Exception {
-        Path pathToCheck = Paths.get(path);
+    public void setPath(final String path) throws Exception {
+        checkPathExists(Paths.get(path));
+        this.path = path;
+    }
 
-        if (!Files.exists(pathToCheck)) {
-            throw new PathNotFoundException(this.path);
-        } else if (!Files.isDirectory(pathToCheck)) {
-            throw new NotADirectoryException(pathToCheck);
+    private void checkPathExists(final Path path) throws PathNotFoundException, NotADirectoryException {
+        if (!Files.exists(path)) {
+            throw new PathNotFoundException(path);
+        } else if (!Files.isDirectory(path)) {
+            throw new NotADirectoryException(path);
         }
-
-        this.path = pathToCheck;
     }
 }

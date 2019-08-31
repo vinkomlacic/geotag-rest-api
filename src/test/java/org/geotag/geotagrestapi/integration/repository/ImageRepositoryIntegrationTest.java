@@ -1,5 +1,7 @@
 package org.geotag.geotagrestapi.integration.repository;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.junit.Assert;
@@ -8,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.geo.Point;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,7 +37,7 @@ public class ImageRepositoryIntegrationTest {
                 "image used for testing",
                 "Arnold_River.jpg",
                 "encoded filename",
-                new Point(1, 2),
+                new GeometryFactory().createPoint(new Coordinate(1, 2)),
                 deviceId,
                 "base64"
         );

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vividsolutions.jts.geom.Point;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.data.geo.Point;
 
 import java.io.IOException;
 
@@ -55,7 +55,9 @@ public class JsonToPointDeserializerTest {
     private Point deseralize(final String json) throws IOException {
         JsonParser jsonParser = objectMapper.getFactory().createParser(json);
 
-        setToPointKey(jsonParser);
+        if (!json.isEmpty()) {
+            setToPointKey(jsonParser);
+        }
 
         return jsonToPointDeserializer.deserialize(jsonParser, deserializationContext);
     }

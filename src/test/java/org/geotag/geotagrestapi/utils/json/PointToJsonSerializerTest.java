@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import org.junit.*;
-import org.springframework.data.geo.Point;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -46,7 +48,7 @@ public class PointToJsonSerializerTest {
 
     @Test
     public void serialize_GivenValidPoint_ShouldReturnSerializedPointObject() throws IOException {
-        Point point = new Point(1, 2);
+        Point point = new GeometryFactory().createPoint(new Coordinate(1, 2));
 
         pointToJsonSerializer.serialize(point, jsonGenerator, serializerProvider);
         jsonGenerator.flush();

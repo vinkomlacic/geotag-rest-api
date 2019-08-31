@@ -1,5 +1,7 @@
 package org.geotag.geotagrestapi.service;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
@@ -41,7 +43,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
                 "dummy image description",
                 "dummy image",
                 dummyImageCopyEncodedFilename,
-                new Point(0, 0),
+                new GeometryFactory().createPoint(new Coordinate(1, 2)),
                 "#12345"
         );
 

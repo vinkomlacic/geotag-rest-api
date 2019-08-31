@@ -1,4 +1,6 @@
 package org.geotag.geotagrestapi.service;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.junit.After;
@@ -55,7 +57,7 @@ public class ImageStoreServiceTest extends StorageAccessBaseTest {
                 "dummy image description",
                 "dummy image",
                 "Arnold_River_2.jpg",
-                new Point(0,0),
+                new GeometryFactory().createPoint(new Coordinate(0, 0)),
                 "#12345",
                 DUMMY_IMAGE_AS_B64
         );

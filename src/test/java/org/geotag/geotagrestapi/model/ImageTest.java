@@ -1,10 +1,12 @@
 package org.geotag.geotagrestapi.model;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.data.geo.Point;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -43,7 +45,7 @@ public class ImageTest {
         defaultImageTitle = "dummy image";
         defaultImageDescription = "dummy image";
         defaultImageEncodedFilename = "encoded filename";
-        defaultImageLocation = new Point(1, 2);
+        defaultImageLocation = new GeometryFactory().createPoint(new Coordinate(0, 0));
         defaultImageDeviceId = "#12345";
         defaultImageBase64Content = getBase64StringFrom(defaultImageBytes);
     }

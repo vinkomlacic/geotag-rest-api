@@ -78,6 +78,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
         Assert.assertNotNull(image.getBase64Content());
     }
 
+    @Test
     public void getImagesFor_GivenNonExistingDeviceId_ShouldReturnEmptySet() throws Exception {
         final String NON_EXISTING_DEVICE_ID = "#54321";
         Set<Image> images = imageRetrievalService.getImagesFor(NON_EXISTING_DEVICE_ID);

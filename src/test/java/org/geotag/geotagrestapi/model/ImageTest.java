@@ -93,9 +93,9 @@ public class ImageTest {
     }
 
     @Test
-    public void constructor_GivenNullEncodedFilename_ShouldProduceAConstraintViolation() throws Exception {
+    public void constructor_GivenNullEncodedFilename_ShouldBeValid() throws Exception {
         setBeanProperty(Image.Fields.encodedFilename, null);
-        assertBeanIsInvalid(image);
+        assertBeanIsValid(image);
     }
 
     @Test
@@ -125,9 +125,9 @@ public class ImageTest {
     }
 
     @Test
-    public void constructor_GivenNullDeviceId_ShouldBeValid() throws Exception {
+    public void constructor_GivenNullDeviceId_ShouldProduceAConstraintViolation() throws Exception {
         setBeanProperty(Image.Fields.deviceId, null);
-        assertBeanIsValid(image);
+        assertBeanIsInvalid(image);
     }
 
     @Test

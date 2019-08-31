@@ -1,5 +1,6 @@
 package org.geotag.geotagrestapi.service;
 
+import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.junit.After;
@@ -78,12 +79,10 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
         Assert.assertNotNull(image.getBase64Content());
     }
 
-    @Test
-    public void getImagesFor_GivenNonExistingDeviceId_ShouldReturnEmptySet() throws Exception {
+    @Test(expected = ImagesNotFoundException.class)
+    public void getImagesFor_GivenNonExistingDeviceId_ShouldThrowAnException() throws Exception {
         final String NON_EXISTING_DEVICE_ID = "#54321";
-        Set<Image> images = imageRetrievalService.getImagesFor(NON_EXISTING_DEVICE_ID);
-
-        Assert.assertTrue(images.isEmpty());
+        imageRetrievalService.getImagesFor(NON_EXISTING_DEVICE_ID);
     }
 
 

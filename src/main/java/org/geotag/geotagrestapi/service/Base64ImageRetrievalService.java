@@ -1,6 +1,7 @@
 package org.geotag.geotagrestapi.service;
 
 import org.geotag.geotagrestapi.config.FileRepositoryConfig;
+import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ public class Base64ImageRetrievalService implements ImageRetrievalService {
     public Set<Image> getImagesFor(final String deviceId) throws Exception {
         Set<Image> images = imageRepository.getImagesByDeviceId(deviceId);
 
-        setBase64ContentPropertyOn(images);
+        if (images.isEmpty()) {
+            throw new ImagesNotFoundException(deviceId);
+        } else {
+            setBase64ContentPropertyOn(images);
+        }
 
         return images;
     }

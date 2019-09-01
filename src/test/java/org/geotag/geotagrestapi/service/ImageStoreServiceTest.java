@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.geo.Point;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -20,6 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+
+import static java.nio.file.Files.delete;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @Import(StorageAccessBaseTest.ImageStoreServiceContextConfiguration.class)
@@ -67,7 +68,7 @@ public class ImageStoreServiceTest extends StorageAccessBaseTest {
     public void tearDown() throws IOException {
         String directory = fileRepositoryConfig.getPath();
         Path imagePath = Paths.get(directory, image.getEncodedFilename());
-        Files.delete(imagePath);
+        delete(imagePath);
     }
 
     @Test
@@ -80,7 +81,7 @@ public class ImageStoreServiceTest extends StorageAccessBaseTest {
         String directory = fileRepositoryConfig.getPath();
         Path imagePath = Paths.get(directory, image.getEncodedFilename());
 
-        Assert.assertTrue(Files.exists(imagePath));
-        Assert.assertTrue(Files.isRegularFile(imagePath));
+        assertTrue(Files.exists(imagePath));
+        assertTrue(Files.isRegularFile(imagePath));
     }
 }

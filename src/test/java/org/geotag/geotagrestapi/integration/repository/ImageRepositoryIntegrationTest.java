@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -47,6 +48,6 @@ public class ImageRepositoryIntegrationTest {
         Set<Image> images = imageRepository.getImagesByDeviceId(deviceId);
         Image found = images.iterator().next();
 
-        Assert.assertEquals(image.getId(), found.getId());
+        assertEquals(image.getId(), found.getId());
     }
 }

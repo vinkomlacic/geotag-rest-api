@@ -12,6 +12,8 @@ import org.junit.*;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import static org.junit.Assert.assertEquals;
+
 public class PointToJsonSerializerTest {
 
     private static PointToJsonSerializer pointToJsonSerializer;
@@ -43,7 +45,7 @@ public class PointToJsonSerializerTest {
         jsonGenerator.flush();
 
         final String EXPECTED_JSON = "\"null\"";
-        Assert.assertEquals(EXPECTED_JSON, writer.toString().trim());
+        assertEquals(EXPECTED_JSON, writer.toString().trim());
     }
 
     @Test
@@ -54,6 +56,6 @@ public class PointToJsonSerializerTest {
         jsonGenerator.flush();
 
         final String EXPECTED_JSON = "\"POINT (1.0 2.0)\"";
-        Assert.assertEquals(EXPECTED_JSON, writer.toString().trim());
+        assertEquals(EXPECTED_JSON, writer.toString().trim());
     }
 }

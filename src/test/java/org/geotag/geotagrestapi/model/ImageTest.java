@@ -20,6 +20,9 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Set;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class ImageTest {
     private static Path defaultImagePath;
     private static String defaultImageTitle;
@@ -70,98 +73,92 @@ public class ImageTest {
 
     @Test
     public void constructor_GivenNullTitle_ShouldBeValid() throws Exception {
-        setBeanProperty(Image.Fields.title, null);
+        image.setTitle(null);
         assertBeanIsValid(image);
     }
 
     @Test
     public void constructor_GivenLargeTitle_ShouldProduceAConstraintViolation() throws Exception {
         String threeHundredCharacterLine = createLineOf(300);
-        setBeanProperty(Image.Fields.title, threeHundredCharacterLine);
+        image.setTitle(threeHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullDescription_ShouldBeValid() throws Exception {
-        setBeanProperty(Image.Fields.description, null);
+        image.setDescription(null);
         assertBeanIsValid(image);
     }
 
     @Test
     public void constructor_GivenLargeDescription_ShouldProduceAConstraintViolation() throws Exception {
         String elevenHundredCharacterLine = createLineOf(1100);
-        setBeanProperty(Image.Fields.description, elevenHundredCharacterLine);
+        image.setDescription(elevenHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullEncodedFilename_ShouldBeValid() throws Exception {
-        setBeanProperty(Image.Fields.encodedFilename, null);
+        image.setEncodedFilename(null);
         assertBeanIsValid(image);
     }
 
     @Test
     public void constructor_GivenLargeEncodedFilename_ShouldProducerAConstraintViolation() throws Exception {
         String threeHundredCharacterLine = createLineOf(300);
-        setBeanProperty(Image.Fields.encodedFilename, threeHundredCharacterLine);
+        image.setEncodedFilename(threeHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullFilename_ShouldProduceAConstraintViolation() throws Exception {
-        setBeanProperty(Image.Fields.filename, null);
+        image.setFilename(null);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenTooLargeFilename_ShouldProduceAConstraintViolation() throws Exception {
         String threeHundredCharacterLine = createLineOf(300);
-        setBeanProperty(Image.Fields.filename, threeHundredCharacterLine);
+        image.setFilename(threeHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullLocation_ShouldProduceAConstraintViolation() throws Exception {
-        setBeanProperty(Image.Fields.location, null);
+        image.setLocation(null);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullDeviceId_ShouldProduceAConstraintViolation() throws Exception {
-        setBeanProperty(Image.Fields.deviceId, null);
+        image.setDeviceId(null);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenLargeDeviceId_ShouldProduceAConstraintViolation() throws Exception {
         String threeHundredCharacterLine = createLineOf(300);
-        setBeanProperty(Image.Fields.deviceId, threeHundredCharacterLine);
+        image.setDeviceId(threeHundredCharacterLine);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNullBase64Content_ShouldProduceAConstraintViolation() throws Exception {
-        setBeanProperty(Image.Fields.base64Content, null);
+        image.setBase64Content(null);
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenEmptyBase64Content_ShouldProduceAConstraintViolation() throws Exception {
-        setBeanProperty(Image.Fields.base64Content, "");
+        image.setBase64Content("");
         assertBeanIsInvalid(image);
     }
 
     @Test
     public void constructor_GivenNotBase64EncodedString_ShouldProduceAConstraintViolation() throws Exception {
         String notBase64Characters = ".,;-";
-        setBeanProperty(Image.Fields.base64Content, notBase64Characters);
+        image.setBase64Content(notBase64Characters);
         assertBeanIsInvalid(image);
-    }
-
-    private void setBeanProperty(final String property, final Object value) throws NoSuchFieldException, IllegalAccessException {
-        Field field = Image.class.getDeclaredField(property);
-        field.setAccessible(true);
-        field.set(image, value);
     }
 
     private String createLineOf(final int numberOfCharacters) {
@@ -176,11 +173,11 @@ public class ImageTest {
 
     private void assertBeanIsValid(final Image image) {
         Set<ConstraintViolation<Image>> violations = validator.validate(image);
-        Assert.assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty());
     }
 
     private void assertBeanIsInvalid(final Image image) {
         Set<ConstraintViolation<Image>> violations = validator.validate(image);
-        Assert.assertFalse(violations.isEmpty());
+        assertFalse(violations.isEmpty());
     }
 }

@@ -5,11 +5,13 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Point;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JsonToPointDeserializerTest {
 
@@ -29,7 +31,7 @@ public class JsonToPointDeserializerTest {
         String json = "";
         Point point = deseralize(json);
 
-        Assert.assertNull(point);
+        assertNull(point);
     }
 
     @Test
@@ -41,8 +43,8 @@ public class JsonToPointDeserializerTest {
 
         Point point = deseralize(json);
 
-        Assert.assertEquals(X, point.getX(), DELTA);
-        Assert.assertEquals(Y, point.getY(), DELTA);
+        assertEquals(X, point.getX(), DELTA);
+        assertEquals(Y, point.getY(), DELTA);
 
     }
 

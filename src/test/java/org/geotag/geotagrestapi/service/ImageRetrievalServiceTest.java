@@ -6,14 +6,11 @@ import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.repository.ImageRepository;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.geo.Point;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -22,6 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.nio.file.Files.copy;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @Import(StorageAccessBaseTest.ImageStoreServiceContextConfiguration.class)
@@ -52,7 +54,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
         Set<Image> images = new HashSet<>();
         images.add(image);
 
-        Mockito.when(imageRepository.getImagesByDeviceId(image.getDeviceId())).thenReturn(images);
+        when(imageRepository.getImagesByDeviceId(image.getDeviceId())).thenReturn(images);
     }
 
     private void createCopyOfDummyImageNamed(final String filename) throws IOException {
@@ -60,7 +62,7 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
         Path originalImage = Paths.get(fileRepositoryPath, DUMMY_IMAGE_FILENAME);
         Path newImage = Paths.get(fileRepositoryPath, filename);
 
-        Files.copy(originalImage, newImage);
+        copy(originalImage, newImage);
     }
 
     @After
@@ -74,10 +76,10 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
     public void getImagesFor_GivenExistingDeviceId_ShouldReturnSetOfOneImageWithContent() throws Exception {
         Set<Image> images = imageRetrievalService.getImagesFor(image.getDeviceId());
 
-        Assert.assertFalse(images.isEmpty());
+        assertFalse(images.isEmpty());
 
         Image image = images.iterator().next();
-        Assert.assertNotNull(image.getBase64Content());
+        assertNotNull(image.getBase64Content());
     }
 
     @Test(expected = ImagesNotFoundException.class)
@@ -85,8 +87,4 @@ public class ImageRetrievalServiceTest extends StorageAccessBaseTest {
         final String NON_EXISTING_DEVICE_ID = "#54321";
         imageRetrievalService.getImagesFor(NON_EXISTING_DEVICE_ID);
     }
-
-
-
-
 }

@@ -1,7 +1,8 @@
 package org.geotag.geotagrestapi.utils;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotEquals;
 
 public class UniqueFilenameGeneratorTest {
 
@@ -12,6 +13,6 @@ public class UniqueFilenameGeneratorTest {
         String first = uniqueFilenameGenerator.generate();
         String second = uniqueFilenameGenerator.generate();
 
-        Assert.assertNotEquals(first, second);
+        assertNotEquals(first, second);
     }
 }

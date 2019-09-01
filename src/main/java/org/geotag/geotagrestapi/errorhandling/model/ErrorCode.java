@@ -9,4 +9,8 @@ public enum ErrorCode {
     ErrorCode(final String errorCode) {
         this.errorCode = errorCode;
     }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
 }

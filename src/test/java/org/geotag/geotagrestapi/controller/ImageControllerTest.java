@@ -1,8 +1,12 @@
 package org.geotag.geotagrestapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.geotag.geotagrestapi.errorhandling.model.ErrorCode;
+import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
 import org.geotag.geotagrestapi.service.ImageRetrievalService;
 import org.geotag.geotagrestapi.service.ImageStoreService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import static org.geotag.geotagrestapi.ImageFactory.createValidImageWithoutEncod
 import static org.geotag.geotagrestapi.ImageFactory.jsonStringOf;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,15 +48,34 @@ public class ImageControllerTest {
     @MockBean
     private ImageRetrievalService imageRetrievalService;
 
-    @Test
-    public void getImages_GivenValidImage_ShouldReturnOkStatus() throws Exception {
-        Image image = createValidImageWithoutEncodedFilename();
+    private Image image;
 
+    @Before
+    public void setUpImageAndServiceMocks() throws Exception {
+        image = createValidImageWithoutEncodedFilename();
+        Set<Image> images = createSetFrom(image);
+
+        given(imageRetrievalService.getImagesFor(anyString())).will(invocationOnMock -> {
+            final int DEVICE_ID_INDEX = 0;
+            String deviceId = invocationOnMock.getArgument(DEVICE_ID_INDEX);
+            if (deviceId.equals(image.getDeviceId())) {
+                return images;
+            } else {
+                throw new ImagesNotFoundException(deviceId);
+            }
+        });
+
+        doAnswer(invocationOnMock -> null).when(imageStoreService).store(any(Image.class));
+    }
+
+    private Set<Image> createSetFrom(final Image image) {
         Set<Image> images = new HashSet<>();
         images.add(image);
+        return images;
+    }
 
-        given(imageRetrievalService.getImagesFor(image.getDeviceId())).willReturn(images);
-
+    @Test
+    public void getImages_GivenValidImage_ShouldReturnOkStatus() throws Exception {
         mvc.perform(buildGetImagesRequest(image.getDeviceId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -63,6 +87,34 @@ public class ImageControllerTest {
                 .andExpect(jsonPath("$[0].base64Content").exists());
     }
 
+    @Test
+    public void getImages_GivenNonExistingDeviceId_ShouldReturnNotFoundErrorResponse() throws Exception {
+        final String NON_EXISTING_DEVICE_ID = "12345";
+        mvc.perform(buildGetImagesRequest(NON_EXISTING_DEVICE_ID))
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.IMAGES_NOT_FOUND.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    public void getImages_GivenEmptyDeviceId_ShouldReturnBadRequestErrorResponse() throws Exception {
+        mvc.perform(buildGetImagesRequest(""))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    public void getImages_GivenInvalidRequest_ShouldReturnBadRequestErrorResponse() throws Exception {
+        mvc.perform(get(IMAGES_ENDPOINT).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.MISSING_REQUEST_PARAM.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
     private MockHttpServletRequestBuilder buildGetImagesRequest(final String deviceId) {
         return get(IMAGES_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -70,13 +122,19 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void storeImage_GivenValidImage_ShouldReturnCreatedStatus() throws Exception {
-        Image image = createValidImageWithoutEncodedFilename();
-
-        doAnswer(invocationOnMock -> null).when(imageStoreService).store(any(Image.class));
-
+    public void store_GivenValidImage_ShouldReturnCreatedStatus() throws Exception {
         mvc.perform(buildStoreRequest().content(jsonStringOf(image)))
                 .andExpect(status().is(HttpStatus.CREATED.value()));
+    }
+
+    @Test
+    public void store_GivenInvalidImage_ShouldReturnBadRequestErrorResponse() throws Exception {
+        image.setFilename(null);
+        mvc.perform(buildStoreRequest().content(jsonStringOf(image)))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     private MockHttpServletRequestBuilder buildStoreRequest() {

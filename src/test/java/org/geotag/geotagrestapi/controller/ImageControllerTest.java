@@ -1,6 +1,5 @@
 package org.geotag.geotagrestapi.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.geotag.geotagrestapi.errorhandling.model.ErrorCode;
 import org.geotag.geotagrestapi.exceptions.ImagesNotFoundException;
 import org.geotag.geotagrestapi.model.Image;
@@ -28,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -115,6 +115,18 @@ public class ImageControllerTest {
                 .andExpect(jsonPath("$.message").exists());
     }
 
+    @Test
+    public void getImages_GivenServiceThrowsUnexpectedException_ShouldReturnInternalServerErrorResponse() throws Exception {
+        final String UNEXPECTED_EXCEPTION_MESSAGE = "unexpected exception";
+        given(imageRetrievalService.getImagesFor(image.getDeviceId())).willThrow(new Exception(UNEXPECTED_EXCEPTION_MESSAGE));
+
+        mvc.perform(buildGetImagesRequest(image.getDeviceId()))
+                .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.GENERAL_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").value(UNEXPECTED_EXCEPTION_MESSAGE));
+    }
+
     private MockHttpServletRequestBuilder buildGetImagesRequest(final String deviceId) {
         return get(IMAGES_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,6 +147,27 @@ public class ImageControllerTest {
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getErrorCode()))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    public void store_GivenNullContent_ShouldReturnBadRequestErrorResponse() throws Exception {
+        mvc.perform(buildStoreRequest().content((byte[]) null))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    public void store_GivenServiceThrowsUnexpectedException_ShuldReturnInternalServerErrorResponse() throws Exception {
+        final String UNEXPECTED_EXCEPTION_MESSAGE = "unexpected exception";
+        doThrow(new Exception(UNEXPECTED_EXCEPTION_MESSAGE)).when(imageStoreService).store(any(Image.class));
+
+        mvc.perform(buildStoreRequest().content(jsonStringOf(image)))
+                .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.GENERAL_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.message").value(UNEXPECTED_EXCEPTION_MESSAGE));
     }
 
     private MockHttpServletRequestBuilder buildStoreRequest() {

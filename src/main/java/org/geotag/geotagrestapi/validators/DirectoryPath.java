@@ -1,5 +1,7 @@
 package org.geotag.geotagrestapi.validators;
 
+import org.geotag.geotagrestapi.validators.impl.PathPointsToDirectoryValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
@@ -9,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Constraint(validatedBy = {})
-public @interface FilePathExists {
-    String message() default "File path does not exist";
+@Constraint(validatedBy = {PathPointsToDirectoryValidator.class})
+public @interface DirectoryPath {
+    String message() default "Path is not a directory";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/images")
+@RequestMapping(ApiResource.IMAGES)
 @Validated
 public class ImageController {
 

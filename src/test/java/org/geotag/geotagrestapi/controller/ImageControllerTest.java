@@ -37,8 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ImageController.class)
 public class ImageControllerTest {
 
-    private static final String IMAGES_ENDPOINT = "/images";
-
     @Autowired
     private MockMvc mvc;
 
@@ -108,7 +106,7 @@ public class ImageControllerTest {
 
     @Test
     public void getImages_GivenInvalidRequest_ShouldReturnBadRequestErrorResponse() throws Exception {
-        mvc.perform(get(IMAGES_ENDPOINT).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get(ApiResource.IMAGES).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.MISSING_REQUEST_PARAM.getErrorCode()))
                 .andExpect(jsonPath("$.timestamp").exists())
@@ -128,7 +126,7 @@ public class ImageControllerTest {
     }
 
     private MockHttpServletRequestBuilder buildGetImagesRequest(final String deviceId) {
-        return get(IMAGES_ENDPOINT)
+        return get(ApiResource.IMAGES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("deviceId", deviceId);
     }
@@ -171,6 +169,6 @@ public class ImageControllerTest {
     }
 
     private MockHttpServletRequestBuilder buildStoreRequest() {
-        return post(IMAGES_ENDPOINT).contentType(MediaType.APPLICATION_JSON);
+        return post(ApiResource.IMAGES).contentType(MediaType.APPLICATION_JSON);
     }
 }
